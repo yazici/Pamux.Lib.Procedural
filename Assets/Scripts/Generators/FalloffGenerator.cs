@@ -9,9 +9,9 @@ namespace Pamux.Lib.Procedural.Generators
         {
             var map = new float[size, size];
 
-            for (var i = 0; i < size; i++)
+            for (var i = 0; i < size; ++i)
             {
-                for (var j = 0; j < size; j++)
+                for (var j = 0; j < size; ++j)
                 {
                     var x = i / (float)size * 2 - 1;
                     var y = j / (float)size * 2 - 1;

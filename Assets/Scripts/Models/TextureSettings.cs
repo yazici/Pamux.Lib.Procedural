@@ -42,7 +42,7 @@ namespace Pamux.Lib.Procedural.Models
         Texture2DArray GenerateTextureArray(Texture2D[] textures)
         {
             var textureArray = new Texture2DArray(textureSize, textureSize, textures.Length, textureFormat, true);
-            for (var i = 0; i < textures.Length; i++)
+            for (var i = 0; i < textures.Length; ++i)
             {
                 textureArray.SetPixels(textures[i].GetPixels(), i);
             }

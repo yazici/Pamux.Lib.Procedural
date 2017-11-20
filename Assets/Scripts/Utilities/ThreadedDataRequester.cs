@@ -40,7 +40,7 @@ namespace Pamux.Lib.Procedural.Utilities
         {
             if (dataQueue.Count > 0)
             {
-                for (var i = 0; i < dataQueue.Count; i++)
+                for (var i = 0; i < dataQueue.Count; ++i)
                 {
                     var threadInfo = dataQueue.Dequeue();
                     threadInfo.callback(threadInfo.parameter);

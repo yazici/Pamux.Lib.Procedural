@@ -7,6 +7,7 @@ namespace Pamux.Lib.Procedural.Models
     public class TerrainChunk
     {
         private const float colliderGenerationDistanceThreshold = 5;
+        private const float colliderGenerationSquareOfDistanceThreshold = colliderGenerationDistanceThreshold * colliderGenerationDistanceThreshold;
 
         public event System.Action<TerrainChunk, bool> onVisibilityChanged;
 
@@ -32,16 +33,16 @@ namespace Pamux.Lib.Procedural.Models
 
         private HeightMapSettings heightMapSettings;
         private MeshSettings meshSettings;
-        private Transform viewer;
+        private TerrainViewer terrainViewer;
 
-        public TerrainChunk(Vector2 coord, HeightMapSettings heightMapSettings, MeshSettings meshSettings, LodInfo[] detailLevels, int colliderLodIndex, Transform parent, Transform viewer, Material material)
+        public TerrainChunk(Vector2 coord, HeightMapSettings heightMapSettings, MeshSettings meshSettings, LodInfo[] detailLevels, int colliderLodIndex, Transform parent, TerrainViewer terrainViewer, Material material)
         {
             this.coord = coord;
             this.detailLevels = detailLevels;
             this.colliderLodIndex = colliderLodIndex;
             this.heightMapSettings = heightMapSettings;
             this.meshSettings = meshSettings;
-            this.viewer = viewer;
+            this.terrainViewer = terrainViewer;
 
             sampleCentre = coord * meshSettings.meshWorldSize / meshSettings.meshScale;
             var position = coord * meshSettings.meshWorldSize;
@@ -59,7 +60,7 @@ namespace Pamux.Lib.Procedural.Models
             SetVisible(false);
 
             lodMeshes = new LodMesh[detailLevels.Length];
-            for (var i = 0; i < detailLevels.Length; i++)
+            for (var i = 0; i < detailLevels.Length; ++i)
             {
                 lodMeshes[i] = new LodMesh(detailLevels[i].lod);
                 lodMeshes[i].updateCallback += UpdateTerrainChunk;
@@ -90,7 +91,7 @@ namespace Pamux.Lib.Procedural.Models
         {
             get
             {
-                return new Vector2(viewer.position.x, viewer.position.z);
+                return terrainViewer.position2d;
             }
         }
 
@@ -99,16 +100,16 @@ namespace Pamux.Lib.Procedural.Models
         {
             if (heightMapReceived)
             {
-                float viewerDstFromNearestEdge = Mathf.Sqrt(bounds.SqrDistance(viewerPosition));
+                var viewerDstFromNearestEdge = terrainViewer.GetDistanceFromNearestEdge(bounds);
 
-                bool wasVisible = IsVisible();
-                bool visible = viewerDstFromNearestEdge <= maxViewDst;
+                var wasVisible = IsVisible();
+                var visible = viewerDstFromNearestEdge <= maxViewDst;
 
                 if (visible)
                 {
                     int lodIndex = 0;
 
-                    for (var i = 0; i < detailLevels.Length - 1; i++)
+                    for (var i = 0; i < detailLevels.Length - 1; ++i)
                     {
                         if (viewerDstFromNearestEdge > detailLevels[i].visibleDstThreshold)
                         {
@@ -122,7 +123,7 @@ namespace Pamux.Lib.Procedural.Models
 
                     if (lodIndex != previousLodIndex)
                     {
-                        LodMesh lodMesh = lodMeshes[lodIndex];
+                        var lodMesh = lodMeshes[lodIndex];
                         if (lodMesh.hasMesh)
                         {
                             previousLodIndex = lodIndex;
@@ -151,25 +152,27 @@ namespace Pamux.Lib.Procedural.Models
 
         public void UpdateCollisionMesh()
         {
-            if (!hasSetCollider)
+            if (hasSetCollider)
             {
-                float sqrDstFromViewerToEdge = bounds.SqrDistance(viewerPosition);
+                return;
+            }
 
-                if (sqrDstFromViewerToEdge < detailLevels[colliderLodIndex].sqrVisibleDstThreshold)
+            var sqrDstFromViewerToEdge = terrainViewer.GetSquareOfDistanceFromNearestEdge(bounds);
+
+            if (sqrDstFromViewerToEdge < detailLevels[colliderLodIndex].sqrVisibleDstThreshold)
+            {
+                if (!lodMeshes[colliderLodIndex].hasRequestedMesh)
                 {
-                    if (!lodMeshes[colliderLodIndex].hasRequestedMesh)
-                    {
-                        lodMeshes[colliderLodIndex].RequestMesh(heightMap, meshSettings);
-                    }
+                    lodMeshes[colliderLodIndex].RequestMesh(heightMap, meshSettings);
                 }
+            }
 
-                if (sqrDstFromViewerToEdge < colliderGenerationDistanceThreshold * colliderGenerationDistanceThreshold)
+            if (sqrDstFromViewerToEdge < colliderGenerationSquareOfDistanceThreshold)
+            {
+                if (lodMeshes[colliderLodIndex].hasMesh)
                 {
-                    if (lodMeshes[colliderLodIndex].hasMesh)
-                    {
-                        meshCollider.sharedMesh = lodMeshes[colliderLodIndex].mesh;
-                        hasSetCollider = true;
-                    }
+                    meshCollider.sharedMesh = lodMeshes[colliderLodIndex].mesh;
+                    hasSetCollider = true;
                 }
             }
         }

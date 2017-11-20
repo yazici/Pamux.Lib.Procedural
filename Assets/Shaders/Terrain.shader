@@ -55,7 +55,7 @@
 		float3 blendAxes = abs(IN.worldNormal);
 		blendAxes /= blendAxes.x + blendAxes.y + blendAxes.z;
 
-		for (int i = 0; i < layerCount; i++) {
+		for (int i = 0; i < layerCount; ++i) {
 			float drawStrength = inverseLerp(-baseBlends[i] / 2 - epsilon, baseBlends[i] / 2, heightPercent - baseStartHeights[i]);
 
 			float3 baseColour = baseColours[i] * baseColourStrength[i];

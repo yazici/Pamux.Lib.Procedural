@@ -17,7 +17,7 @@ namespace Pamux.Lib.Procedural.Generators
         public HeightMapSettings heightMapSettings;
         public TextureSettings textureSettings;
 
-        public Transform viewer;
+        public TerrainViewer terrainViewer;
         public Material mapMaterial;
 
         private Vector2 viewerPosition;
@@ -43,7 +43,7 @@ namespace Pamux.Lib.Procedural.Generators
 
         void Update()
         {
-            viewerPosition = new Vector2(viewer.position.x, viewer.position.z);
+            viewerPosition = new Vector2(terrainViewer.transform.position.x, terrainViewer.transform.position.z);
 
             if (viewerPosition != viewerPositionOld)
             {
@@ -85,7 +85,7 @@ namespace Pamux.Lib.Procedural.Generators
                         }
                         else
                         {
-                            var newChunk = new TerrainChunk(viewedChunkCoord, heightMapSettings, meshSettings, detailLevels, colliderLodIndex, transform, viewer, mapMaterial);
+                            var newChunk = new TerrainChunk(viewedChunkCoord, heightMapSettings, meshSettings, detailLevels, colliderLodIndex, transform, terrainViewer, mapMaterial);
                             terrainChunkDictionary.Add(viewedChunkCoord, newChunk);
                             newChunk.onVisibilityChanged += OnTerrainChunkVisibilityChanged;
                             newChunk.Load();

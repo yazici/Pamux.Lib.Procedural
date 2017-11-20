@@ -18,7 +18,7 @@ namespace Pamux.Lib.Procedural.Generators
             var amplitude = 1f;
             var frequency = 1f;
 
-            for (var i = 0; i < settings.octaves; i++)
+            for (var i = 0; i < settings.octaves; ++i)
             {
                 var offsetX = prng.Next(-100000, 100000) + settings.offset.x + sampleCentre.x;
                 var offsetY = prng.Next(-100000, 100000) - settings.offset.y - sampleCentre.y;
@@ -35,16 +35,16 @@ namespace Pamux.Lib.Procedural.Generators
             var halfHeight = mapHeight / 2f;
 
 
-            for (var y = 0; y < mapHeight; y++)
+            for (var y = 0; y < mapHeight; ++y)
             {
-                for (var x = 0; x < mapWidth; x++)
+                for (var x = 0; x < mapWidth; ++x)
                 {
 
                     amplitude = 1f;
                     frequency = 1f;
                     var noiseHeight = 0f;
 
-                    for (var i = 0; i < settings.octaves; i++)
+                    for (var i = 0; i < settings.octaves; ++i)
                     {
                         var sampleX = (x - halfWidth + octaveOffsets[i].x) / settings.scale * frequency;
                         var sampleY = (y - halfHeight + octaveOffsets[i].y) / settings.scale * frequency;
@@ -76,9 +76,9 @@ namespace Pamux.Lib.Procedural.Generators
 
             if (settings.normalizeMode == NormalizeMode.Local)
             {
-                for (var y = 0; y < mapHeight; y++)
+                for (var y = 0; y < mapHeight; ++y)
                 {
-                    for (var x = 0; x < mapWidth; x++)
+                    for (var x = 0; x < mapWidth; ++x)
                     {
                         noiseMap[x, y] = Mathf.InverseLerp(minLocalNoiseHeight, maxLocalNoiseHeight, noiseMap[x, y]);
                     }

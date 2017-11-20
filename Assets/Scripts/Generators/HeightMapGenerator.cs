@@ -16,9 +16,9 @@ namespace Pamux.Lib.Procedural.Generators
             var minValue = float.MaxValue;
             var maxValue = float.MinValue;
 
-            for (var i = 0; i < width; i++)
+            for (var i = 0; i < width; ++i)
             {
-                for (var j = 0; j < height; j++)
+                for (var j = 0; j < height; ++j)
                 {
                     values[i, j] *= heightCurve_threadsafe.Evaluate(values[i, j]) * settings.heightMultiplier;
 

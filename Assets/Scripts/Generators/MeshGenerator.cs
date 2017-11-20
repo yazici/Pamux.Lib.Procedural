@@ -19,9 +19,9 @@ namespace Pamux.Lib.Procedural.Generators
             var meshVertexIndex = 0;
             var outOfMeshVertexIndex = -1;
 
-            for (var y = 0; y < numVertsPerLine; y++)
+            for (var y = 0; y < numVertsPerLine; ++y)
             {
-                for (var x = 0; x < numVertsPerLine; x++)
+                for (var x = 0; x < numVertsPerLine; ++x)
                 {
                     var isOutOfMeshVertex = y == 0 || y == numVertsPerLine - 1 || x == 0 || x == numVertsPerLine - 1;
                     var isSkippedVertex = x > 2 && x < numVertsPerLine - 3 && y > 2 && y < numVertsPerLine - 3 && ((x - 2) % skipIncrement != 0 || (y - 2) % skipIncrement != 0);
@@ -38,9 +38,9 @@ namespace Pamux.Lib.Procedural.Generators
                 }
             }
 
-            for (var y = 0; y < numVertsPerLine; y++)
+            for (var y = 0; y < numVertsPerLine; ++y)
             {
-                for (var x = 0; x < numVertsPerLine; x++)
+                for (var x = 0; x < numVertsPerLine; ++x)
                 {
                     var isSkippedVertex = x > 2 && x < numVertsPerLine - 3 && y > 2 && y < numVertsPerLine - 3 && ((x - 2) % skipIncrement != 0 || (y - 2) % skipIncrement != 0);
 

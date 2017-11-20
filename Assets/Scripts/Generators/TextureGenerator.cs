@@ -24,9 +24,9 @@ namespace Pamux.Lib.Procedural.Generators
             var height = heightMap.values.GetLength(1);
 
             var colourMap = new Color[width * height];
-            for (var y = 0; y < height; y++)
+            for (var y = 0; y < height; ++y)
             {
-                for (var x = 0; x < width; x++)
+                for (var x = 0; x < width; ++x)
                 {
                     colourMap[y * width + x] = Color.Lerp(Color.black, Color.white, Mathf.InverseLerp(heightMap.minValue, heightMap.maxValue, heightMap.values[x, y]));
                 }

@@ -85,7 +85,7 @@ namespace Pamux.Lib.Procedural.Models
 
             var vertexNormals = new Vector3[vertices.Length];
             var triangleCount = triangles.Length / 3;
-            for (var i = 0; i < triangleCount; i++)
+            for (var i = 0; i < triangleCount; ++i)
             {
                 var normalTriangleIndex = i * 3;
                 var vertexIndexA = triangles[normalTriangleIndex];
@@ -99,7 +99,7 @@ namespace Pamux.Lib.Procedural.Models
             }
 
             var borderTriangleCount = outOfMeshTriangles.Length / 3;
-            for (var i = 0; i < borderTriangleCount; i++)
+            for (var i = 0; i < borderTriangleCount; ++i)
             {
                 var normalTriangleIndex = i * 3;
                 var vertexIndexA = outOfMeshTriangles[normalTriangleIndex];
@@ -122,7 +122,7 @@ namespace Pamux.Lib.Procedural.Models
             }
 
 
-            for (var i = 0; i < vertexNormals.Length; i++)
+            for (var i = 0; i < vertexNormals.Length; ++i)
             {
                 vertexNormals[i].Normalize();
             }
@@ -173,7 +173,7 @@ namespace Pamux.Lib.Procedural.Models
             var flatShadedVertices = new Vector3[triangles.Length];
             var flatShadedUvs = new Vector2[triangles.Length];
 
-            for (var i = 0; i < triangles.Length; i++)
+            for (var i = 0; i < triangles.Length; ++i)
             {
                 flatShadedVertices[i] = vertices[triangles[i]];
                 flatShadedUvs[i] = uvs[triangles[i]];

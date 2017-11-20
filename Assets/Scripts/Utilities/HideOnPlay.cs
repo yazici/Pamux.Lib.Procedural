@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace Pamux.Lib.Procedural.Utilities
+namespace Pamux.Lib.Utilities
 {
     public class HideOnPlay : MonoBehaviour
     {

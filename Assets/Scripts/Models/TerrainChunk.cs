@@ -35,7 +35,7 @@ namespace Pamux.Lib.Procedural.Models
         private MeshSettings meshSettings;
         private TerrainViewer terrainViewer;
 
-        public TerrainChunk(Vector2 coord, HeightMapSettings heightMapSettings, MeshSettings meshSettings, LodInfo[] detailLevels, int colliderLodIndex, Transform parent, TerrainViewer terrainViewer, Material material)
+        public TerrainChunk(TerrainViewer terrainViewer, Vector2 coord, HeightMapSettings heightMapSettings, MeshSettings meshSettings, LodInfo[] detailLevels, int colliderLodIndex, Material material)
         {
             this.coord = coord;
             this.detailLevels = detailLevels;
@@ -44,8 +44,8 @@ namespace Pamux.Lib.Procedural.Models
             this.meshSettings = meshSettings;
             this.terrainViewer = terrainViewer;
 
-            sampleCentre = coord * meshSettings.meshWorldSize / meshSettings.meshScale;
             var position = coord * meshSettings.meshWorldSize;
+            sampleCentre = position / meshSettings.meshScale;
             bounds = new Bounds(position, Vector2.one * meshSettings.meshWorldSize);
 
 
@@ -56,7 +56,7 @@ namespace Pamux.Lib.Procedural.Models
             meshRenderer.material = material;
 
             meshObject.transform.position = new Vector3(position.x, 0, position.y);
-            meshObject.transform.parent = parent;
+            meshObject.transform.parent = terrainViewer.ChunkParent;
             SetVisible(false);
 
             lodMeshes = new LodMesh[detailLevels.Length];
@@ -87,65 +87,58 @@ namespace Pamux.Lib.Procedural.Models
             UpdateTerrainChunk();
         }
 
-        Vector2 viewerPosition
-        {
-            get
-            {
-                return terrainViewer.position2d;
-            }
-        }
-
-
         public void UpdateTerrainChunk()
         {
-            if (heightMapReceived)
+            if (!heightMapReceived)
             {
-                var viewerDstFromNearestEdge = terrainViewer.GetDistanceFromNearestEdge(bounds);
+                return;
+            }
 
-                var wasVisible = IsVisible();
-                var visible = viewerDstFromNearestEdge <= maxViewDst;
+            var viewerDstFromNearestEdge = terrainViewer.GetDistanceFromNearestEdge(bounds);
 
-                if (visible)
+            var wasVisible = IsVisible();
+            var visible = viewerDstFromNearestEdge <= maxViewDst;
+
+            if (visible)
+            {
+                int lodIndex = 0;
+
+                for (var i = 0; i < detailLevels.Length - 1; ++i)
                 {
-                    int lodIndex = 0;
-
-                    for (var i = 0; i < detailLevels.Length - 1; ++i)
+                    if (viewerDstFromNearestEdge > detailLevels[i].visibleDstThreshold)
                     {
-                        if (viewerDstFromNearestEdge > detailLevels[i].visibleDstThreshold)
-                        {
-                            lodIndex = i + 1;
-                        }
-                        else
-                        {
-                            break;
-                        }
+                        lodIndex = i + 1;
                     }
-
-                    if (lodIndex != previousLodIndex)
+                    else
                     {
-                        var lodMesh = lodMeshes[lodIndex];
-                        if (lodMesh.hasMesh)
-                        {
-                            previousLodIndex = lodIndex;
-                            meshFilter.mesh = lodMesh.mesh;
-                        }
-                        else if (!lodMesh.hasRequestedMesh)
-                        {
-                            lodMesh.RequestMesh(heightMap, meshSettings);
-                        }
+                        break;
                     }
-
-
                 }
 
-                if (wasVisible != visible)
+                if (lodIndex != previousLodIndex)
                 {
-
-                    SetVisible(visible);
-                    if (onVisibilityChanged != null)
+                    var lodMesh = lodMeshes[lodIndex];
+                    if (lodMesh.hasMesh)
                     {
-                        onVisibilityChanged(this, visible);
+                        previousLodIndex = lodIndex;
+                        meshFilter.mesh = lodMesh.mesh;
                     }
+                    else if (!lodMesh.hasRequestedMesh)
+                    {
+                        lodMesh.RequestMesh(heightMap, meshSettings);
+                    }
+                }
+
+
+            }
+
+            if (wasVisible != visible)
+            {
+
+                SetVisible(visible);
+                if (onVisibilityChanged != null)
+                {
+                    onVisibilityChanged(this, visible);
                 }
             }
         }

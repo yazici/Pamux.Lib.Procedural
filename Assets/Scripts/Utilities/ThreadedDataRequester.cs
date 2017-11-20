@@ -4,30 +4,25 @@ using UnityEngine;
 using System;
 using System.Threading;
 using Pamux.Lib.Procedural.Models;
+using Pamux.Lib.Utilities;
 
 namespace Pamux.Lib.Procedural.Utilities
 {
-    public class ThreadedDataRequester : MonoBehaviour
+    public class ThreadedDataRequester : Singleton<ThreadedDataRequester>
     {
-        private static ThreadedDataRequester instance;
         private Queue<ThreadInfo> dataQueue = new Queue<ThreadInfo>();
-
-        void Awake()
-        {
-            instance = FindObjectOfType<ThreadedDataRequester>();
-        }
 
         public static void RequestData(Func<object> generateData, Action<object> callback)
         {
             ThreadStart threadStart = delegate
             {
-                instance.DataThread(generateData, callback);
+                Instance.DataThread(generateData, callback);
             };
 
             new Thread(threadStart).Start();
         }
 
-        void DataThread(Func<object> generateData, Action<object> callback)
+        private void DataThread(Func<object> generateData, Action<object> callback)
         {
             var data = generateData();
             lock (dataQueue)

@@ -40,7 +40,7 @@ namespace Pamux.Lib.Procedural.Utilities
             }
             else if (drawMode == DrawModes.FalloffMap)
             {
-                DrawTexture(TextureGenerator.TextureFromHeightMap(new HeightMap(FalloffGenerator.GenerateFalloffMap(meshSettings.numVertsPerLine), 0, 1)));
+                DrawTexture(TextureGenerator.TextureFromHeightMap(new HeightMap(FalloffGenerator.GenerateFalloffMap(meshSettings.numVertsPerLine, meshSettings.numVertsPerLine), 0, 1)));
             }
         }
 

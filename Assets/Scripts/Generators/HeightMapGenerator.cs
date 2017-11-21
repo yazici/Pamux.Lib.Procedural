@@ -7,9 +7,13 @@ namespace Pamux.Lib.Procedural.Generators
 {
     public static class HeightMapGenerator
     {
+        private static float[,] falloffMap;
+
         public static HeightMap GenerateHeightMap(int width, int height, HeightMapSettings settings, Vector2 sampleCentre)
         {
             var values = NoiseGenerator.GenerateNoiseMap(width, height, settings.noiseSettings, sampleCentre);
+
+
 
             AnimationCurve heightCurve_threadsafe = new AnimationCurve(settings.heightCurve.keys);
 
@@ -32,6 +36,22 @@ namespace Pamux.Lib.Procedural.Generators
                     }
                 }
             }
+
+
+
+            if (settings.useFalloff)
+            {
+                var falloffMap = FalloffGenerator.GenerateFalloffMap(width, height);
+
+                for (var y = 0; y < height; ++y)
+                {
+                    for (var x = 0; x < width; ++x)
+                    {
+                        values[x, y] = Mathf.Clamp01(values[x, y] - falloffMap[x, y]);
+                    }
+                }
+            }
+
             return new HeightMap(values, minValue, maxValue);
         }
     }

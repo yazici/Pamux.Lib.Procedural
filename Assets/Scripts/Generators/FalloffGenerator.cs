@@ -5,19 +5,19 @@ namespace Pamux.Lib.Procedural.Generators
 {
     public static class FalloffGenerator
     {
-        public static float[,] GenerateFalloffMap(int size)
+        public static float[,] GenerateFalloffMap(int width, int height)
         {
-            var map = new float[size, size];
+            var map = new float[width, height];
 
-            for (var i = 0; i < size; ++i)
+            for (var y = 0; y < height; ++y)
             {
-                for (var j = 0; j < size; ++j)
+                for (var x = 0; x < width; ++x)
                 {
-                    var x = i / (float)size * 2 - 1;
-                    var y = j / (float)size * 2 - 1;
+                    var dx = x / (float)width * 2 - 1;
+                    var dy = y / (float)height * 2 - 1;
 
-                    var value = Mathf.Max(Mathf.Abs(x), Mathf.Abs(y));
-                    map[i, j] = Evaluate(value);
+                    var value = Mathf.Max(Mathf.Abs(dx), Mathf.Abs(dy));
+                    map[x, y] = Evaluate(value);
                 }
             }
 

@@ -31,16 +31,18 @@ namespace Pamux.Lib.Procedural.Models
         private bool hasSetCollider;
         private float maxViewDst;
 
+        private GlobalSettings globalSettings;
         private HeightMapSettings heightMapSettings;
         private MeshSettings meshSettings;
         private TerrainViewer terrainViewer;
 
-        public TerrainChunk(TerrainViewer terrainViewer, Vector2 coord, HeightMapSettings heightMapSettings, MeshSettings meshSettings, LodInfo[] detailLevels, int colliderLodIndex, Material material)
+        public TerrainChunk(TerrainViewer terrainViewer, Vector2 coord, GlobalSettings globalSettings, HeightMapSettings heightMapSettings, MeshSettings meshSettings, LodInfo[] detailLevels, int colliderLodIndex, Material material)
         {
             this.coord = coord;
             this.detailLevels = detailLevels;
             this.colliderLodIndex = colliderLodIndex;
             this.heightMapSettings = heightMapSettings;
+            this.globalSettings = globalSettings;
             this.meshSettings = meshSettings;
             this.terrainViewer = terrainViewer;
 
@@ -76,7 +78,7 @@ namespace Pamux.Lib.Procedural.Models
 
         public void Load()
         {
-            ThreadedDataRequester.RequestData(() => HeightMapGenerator.GenerateHeightMap(meshSettings.numVertsPerLine, meshSettings.numVertsPerLine, heightMapSettings, sampleCentre), OnHeightMapReceived);
+            ThreadedDataRequester.RequestData(() => HeightMapGenerator.GenerateHeightMap(meshSettings.numVertsPerLine, meshSettings.numVertsPerLine, globalSettings, heightMapSettings, sampleCentre), OnHeightMapReceived);
         }
 
         void OnHeightMapReceived(object heightMapObject)

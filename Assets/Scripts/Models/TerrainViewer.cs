@@ -13,6 +13,7 @@ namespace Pamux.Lib.Procedural.Models
         private const float moveThresholdForChunkUpdate = 25f;
         private const float moveThresholdForChunkUpdateSquared = moveThresholdForChunkUpdate * moveThresholdForChunkUpdate;
 
+        public GlobalSettings globalSettings;
         public MeshSettings meshSettings;
         public HeightMapSettings heightMapSettings;
         public TextureSettings textureSettings;
@@ -99,6 +100,8 @@ namespace Pamux.Lib.Procedural.Models
 
         void UpdateVisibleChunks()
         {
+            chunkVisibilityEvaluationPosition2d = currentPosition2d;
+
             var alreadyUpdatedChunkCoords = new HashSet<Vector2>();
             for (var i = visibleTerrainChunks.Count - 1; i >= 0; i--)
             {
@@ -122,7 +125,7 @@ namespace Pamux.Lib.Procedural.Models
                         }
                         else
                         {
-                            var newChunk = new TerrainChunk(this, viewedChunkCoord, heightMapSettings, meshSettings, detailLevels, colliderLodIndex, mapMaterial);
+                            var newChunk = new TerrainChunk(this, viewedChunkCoord, globalSettings, heightMapSettings, meshSettings, detailLevels, colliderLodIndex, mapMaterial);
                             terrainChunkDictionary.Add(viewedChunkCoord, newChunk);
                             newChunk.onVisibilityChanged += OnTerrainChunkVisibilityChanged;
                             newChunk.Load();

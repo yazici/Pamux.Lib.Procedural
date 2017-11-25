@@ -9,48 +9,48 @@ namespace Pamux.Lib.Procedural.Generators
     {
         private static float[,] falloffMap;
 
-        public static HeightMap GenerateHeightMap(int width, int height, HeightMapSettings settings, Vector2 sampleCentre)
+        public static HeightMap GenerateHeightMap(int width, int height, GlobalSettings globalSettings, HeightMapSettings heightMapSettings, Vector2 sampleCentre)
         {
-            var values = NoiseGenerator.GenerateNoiseMap(width, height, settings.noiseSettings, sampleCentre);
+            var values = NoiseGenerator.GenerateNoiseMap(width, height, heightMapSettings.noiseSettings, sampleCentre);
 
-
-
-            AnimationCurve heightCurve_threadsafe = new AnimationCurve(settings.heightCurve.keys);
+            AnimationCurve heightCurve_threadsafe = new AnimationCurve(heightMapSettings.heightCurve.keys);
 
             var minValue = float.MaxValue;
             var maxValue = float.MinValue;
 
-            for (var i = 0; i < width; ++i)
+            //if (settings.useFalloff)
+            //{
+            //    var falloffMap = FalloffGenerator.GenerateFalloffMap(width, height);
+
+            //    for (var y = 0; y < height; ++y)
+            //    {
+            //        for (var x = 0; x < width; ++x)
+            //        {
+            //            values[x, y] = Mathf.Clamp01(values[x, y] - falloffMap[x, y]);
+            //        }
+            //    }
+            //}
+
+            for (var x = 0; x < width; ++x)
             {
-                for (var j = 0; j < height; ++j)
-                {
-                    values[i, j] *= heightCurve_threadsafe.Evaluate(values[i, j]) * settings.heightMultiplier;
-
-                    if (values[i, j] > maxValue)
-                    {
-                        maxValue = values[i, j];
-                    }
-                    if (values[i, j] < minValue)
-                    {
-                        minValue = values[i, j];
-                    }
-                }
-            }
-
-
-
-            if (settings.useFalloff)
-            {
-                var falloffMap = FalloffGenerator.GenerateFalloffMap(width, height);
-
                 for (var y = 0; y < height; ++y)
                 {
-                    for (var x = 0; x < width; ++x)
+                    values[x, y] *= heightCurve_threadsafe.Evaluate(values[x, y]) * heightMapSettings.heightMultiplier;
+
+                    if (values[x, y] > maxValue)
                     {
-                        values[x, y] = Mathf.Clamp01(values[x, y] - falloffMap[x, y]);
+                        maxValue = values[x, y];
+                    }
+                    if (values[x, y] < minValue)
+                    {
+                        minValue = values[x, y];
                     }
                 }
             }
+
+
+
+            
 
             return new HeightMap(values, minValue, maxValue);
         }

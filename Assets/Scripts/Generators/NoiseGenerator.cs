@@ -7,10 +7,9 @@ namespace Pamux.Lib.Procedural.Generators
 {
     public static class NoiseGenerator
     {
-        public static float[,] GenerateNoiseMap(int mapWidth, int mapHeight, NoiseSettings settings, Vector2 sampleCentre)
+        public static float[,] GenerateNoiseMap(int mapWidth, int mapHeight, GlobalSettings globalSettings, NoiseSettings settings, Vector2 sampleCentre)
         {
             var noiseMap = new float[mapWidth, mapHeight];
-
             var prng = new System.Random(settings.seed);
             var octaveOffsets = new Vector2[settings.octaves];
 
@@ -34,16 +33,17 @@ namespace Pamux.Lib.Procedural.Generators
             var halfWidth = mapWidth / 2f;
             var halfHeight = mapHeight / 2f;
 
-
             for (var y = 0; y < mapHeight; ++y)
             {
                 for (var x = 0; x < mapWidth; ++x)
                 {
+                    
 
                     amplitude = 1f;
                     frequency = 1f;
                     var noiseHeight = 0f;
 
+                    
                     for (var i = 0; i < settings.octaves; ++i)
                     {
                         var sampleX = (x - halfWidth + octaveOffsets[i].x) / settings.scale * frequency;
@@ -55,6 +55,8 @@ namespace Pamux.Lib.Procedural.Generators
                         amplitude *= settings.persistance;
                         frequency *= settings.lacunarity;
                     }
+
+                    
 
                     if (noiseHeight > maxLocalNoiseHeight)
                     {

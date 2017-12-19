@@ -29,6 +29,9 @@ namespace Pamux.Lib.Procedural.Utilities
         {
             textureData.ApplyToMaterial(terrainMaterial);
             textureData.UpdateMeshHeights(terrainMaterial, heightMapSettings.minHeight, heightMapSettings.maxHeight);
+
+            globalSettings.Initialize();
+
             var heightMap = HeightMapGenerator.GenerateHeightMap(meshSettings.numVertsPerLine, meshSettings.numVertsPerLine, globalSettings, heightMapSettings, Vector2.zero);
 
             if (drawMode == DrawModes.NoiseMap)

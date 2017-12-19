@@ -56,6 +56,7 @@ namespace Pamux.Lib.Procedural.Models
 
             textureSettings.ApplyToMaterial(mapMaterial);
             textureSettings.UpdateMeshHeights(mapMaterial, heightMapSettings.minHeight, heightMapSettings.maxHeight);
+            globalSettings.Initialize();
 
             SetCurrentPosition2d();
 

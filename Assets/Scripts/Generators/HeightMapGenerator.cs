@@ -11,7 +11,7 @@ namespace Pamux.Lib.Procedural.Generators
 
         public static HeightMap GenerateHeightMap(int width, int height, GlobalSettings globalSettings, HeightMapSettings heightMapSettings, Vector2 sampleCentre)
         {
-            var values = NoiseGenerator.GenerateNoiseMap(width, height, heightMapSettings.noiseSettings, sampleCentre);
+            var values = NoiseGenerator.GenerateNoiseMap(width, height, globalSettings, heightMapSettings.noiseSettings, sampleCentre);
 
             AnimationCurve heightCurve_threadsafe = new AnimationCurve(heightMapSettings.heightCurve.keys);
 
@@ -36,7 +36,7 @@ namespace Pamux.Lib.Procedural.Generators
                 for (var y = 0; y < height; ++y)
                 {
                     values[x, y] *= heightCurve_threadsafe.Evaluate(values[x, y]) * heightMapSettings.heightMultiplier;
-
+         
                     if (values[x, y] > maxValue)
                     {
                         maxValue = values[x, y];
@@ -47,10 +47,6 @@ namespace Pamux.Lib.Procedural.Generators
                     }
                 }
             }
-
-
-
-            
 
             return new HeightMap(values, minValue, maxValue);
         }
